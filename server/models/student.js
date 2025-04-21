@@ -11,13 +11,14 @@ module.exports = (sequelize, DataTypes) => {
      */
     static associate(models) {
       // define association here
+      student.belongsTo(models.major, { foreignKey: 'major_id' });
     }
   }
   student.init({
     firstName: DataTypes.STRING,
     lastName: DataTypes.STRING,
-    classes: DataTypes.ENUM,
-    gender: DataTypes.ENUM,
+    classes: DataTypes.ENUM('X', 'XI', 'XII'),
+    gender: DataTypes.ENUM('M', 'F'),
     major_id: DataTypes.INTEGER
   }, {
     sequelize,

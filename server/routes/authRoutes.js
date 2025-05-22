@@ -50,7 +50,7 @@ module.exports = (app) => {
                     username: value,
                 },
             })
-
+            
             if (!!userNameCheck) {
                 throw new Error("Username already exists");
             }   

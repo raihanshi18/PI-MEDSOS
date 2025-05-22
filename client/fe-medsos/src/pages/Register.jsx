@@ -14,8 +14,19 @@ import CssBaseline from "@mui/material/CssBaseline";
 import { Link } from "react-router-dom";
 import { CardRegister } from "../utils/style";
 import { SignInContainer } from "../utils/style";
+import { useForm } from "react-hook-form";
+import { useDispatch, useSelector } from "react-redux";
+import { useEffect } from "react";
+import { fetchMajor } from "../redux/action/majorAction";
 
 const Register = () => {
+  const { register, handleSubmit } = useForm()
+  const onSubmit = (value) => console.log(value)
+
+  const major = useSelector(root => root?.major)
+  const dispatch = useDispatch()
+
+  useEffect(() => dispatch(fetchMajor()), [])
   return (
     <>
       <CssBaseline enableColorScheme />
@@ -30,7 +41,7 @@ const Register = () => {
           </Typography>
           <Box
             component="form"
-            // onSubmit={handleSubmit}
+            onSubmit={handleSubmit}
             noValidate
             sx={{
               display: "flex",
@@ -53,7 +64,7 @@ const Register = () => {
                 required
                 fullWidth
                 variant="outlined"
-                // color={emailError ? 'error' : 'primary'}
+                {...register('username')}
               />
             </FormControl>
 
@@ -71,7 +82,8 @@ const Register = () => {
                 required
                 fullWidth
                 variant="outlined"
-                // color={emailError ? 'error' : 'primary'}
+                {...register('email')}
+
               />
             </FormControl>
 
@@ -89,7 +101,7 @@ const Register = () => {
                 required
                 fullWidth
                 variant="outlined"
-                // color={passwordError ? 'error' : 'primary'}
+                {...register('password')}
               />
             </FormControl>
             <Grid
@@ -112,7 +124,7 @@ const Register = () => {
                     required
                     fullWidth
                     variant="outlined"
-                    // color={emailError ? 'error' : 'primary'}
+                {...register('firstName')}
                   />
                 </FormControl>
               </Grid>
@@ -131,7 +143,7 @@ const Register = () => {
                     required
                     fullWidth
                     variant="outlined"
-                    // color={emailError ? 'error' : 'primary'}
+                {...register('lastName')}
                   />
                 </FormControl>
               </Grid>
@@ -144,6 +156,7 @@ const Register = () => {
                     // value={age}
                     label="Gender"
                     // onChange={handleChange}
+                {...register('gender')}
                   >
                     <MenuItem value={"M"}>Male</MenuItem>
                     <MenuItem value={"F"}>Female</MenuItem>
@@ -159,6 +172,7 @@ const Register = () => {
                     // value={age}
                     label="Classes"
                     // onChange={handleChange}
+                {...register('classes')}
                   >
                     <MenuItem value={"X"}>X</MenuItem>
                     <MenuItem value={"XI"}>XI</MenuItem>
@@ -175,15 +189,13 @@ const Register = () => {
                     // value={age}
                     label="Majors"
                     // onChange={handleChange}
+                {...register('major')}
                   >
-                    <MenuItem value={"PPLG"}>PPLG</MenuItem>
-                    <MenuItem value={"MPLB"}>MPLB</MenuItem>
-                    <MenuItem value={"TJKT"}>TJKT</MenuItem>
-                    <MenuItem value={"TKRO"}>TKRO</MenuItem>
-                    <MenuItem value={"TBSM"}>TBSM</MenuItem>
-                    <MenuItem value={"HR"}>HR</MenuItem>
-                    <MenuItem value={"DKV"}>DKV</MenuItem>
-                    <MenuItem value={"TP"}>TP</MenuItem>
+                    {
+                      major?.data?.map((m, i) => <MenuItem 
+                      key={i}
+                      value={"PPLG"}>{m?.name}</MenuItem>)
+                    }
                   </Select>
                 </FormControl>
 

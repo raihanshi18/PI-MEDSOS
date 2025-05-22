@@ -1,11 +1,16 @@
 const express = require('express')
 const bodyParser = require('body-parser')
+const cors = require('cors')
 
 const app = express()
 app.use(bodyParser.json())
 app.use(bodyParser.urlencoded({ extended: false }))
 const port = 3000
 const hostName = '127.0.0.1'
+
+const corsOption = {
+	origins: "http://localhost:5173"
+}
 
 const {Sequelize} = require('sequelize')
 const { body, param, validationResult } = require('express-validator')
@@ -23,6 +28,8 @@ app.use(express.static(path.join(__dirname, 'public')));
 
 const authRoutes = require('./routes/authRoutes.js')
 const studentRoutes = require('./routes/studentRoutes.js')
+const majorRoutes = require('./routes/majorRoutes.js')
+const postingRoutes = require('./routes/postingRoutes.js')
 
 const server = http.createServer(app);
 const wss = new WebSocket.Server({ server });
@@ -31,8 +38,10 @@ const clients = new Set();
 
 //routing main
 
-app.use('/v1/auth' , authRoutes(express))
+app.use('/v1/auth' , cors(corsOption), authRoutes(express))
+app.use('/v1' , cors(corsOption), majorRoutes(express))
 app.use('/v1/student' , studentRoutes(express))
+app.use('/v1/post' , cors(corsOption), postingRoutes(express))
 
 
 // Middleware untuk menangani WebSocket

@@ -30,6 +30,7 @@ const authRoutes = require('./routes/authRoutes.js')
 const studentRoutes = require('./routes/studentRoutes.js')
 const majorRoutes = require('./routes/majorRoutes.js')
 const postingRoutes = require('./routes/postingRoutes.js')
+const commentRoutes = require('./routes/commentRoutes.js')
 
 const server = http.createServer(app);
 const wss = new WebSocket.Server({ server });
@@ -42,6 +43,7 @@ app.use('/v1/auth' , cors(corsOption), authRoutes(express))
 app.use('/v1' , cors(corsOption), majorRoutes(express))
 app.use('/v1/student' , studentRoutes(express))
 app.use('/v1/post' , cors(corsOption), postingRoutes(express))
+app.use('/v1/comment' , cors(corsOption), commentRoutes(express))
 
 
 // Middleware untuk menangani WebSocket

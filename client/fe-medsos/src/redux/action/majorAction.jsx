@@ -19,7 +19,7 @@ export const fetchMajor = (token) => (dispatch) =>{
         dispatch({
             type: 'MAJOR_FAIL',
             payload: {
-                data: err.response
+                err: err.response
             }   
         })
     })

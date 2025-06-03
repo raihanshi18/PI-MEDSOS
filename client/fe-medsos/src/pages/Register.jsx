@@ -1,4 +1,5 @@
 import {
+  Alert,
   Box,
   Button,
   FormControl,
@@ -18,19 +19,22 @@ import { useForm } from "react-hook-form";
 import { useDispatch, useSelector } from "react-redux";
 import { useEffect } from "react";
 import { fetchMajor } from "../redux/action/majorAction";
+import { authRegister } from "../redux/action/authAction";
 
 const Register = () => {
-  const { register, handleSubmit } = useForm()
-  const onSubmit = (value) => console.log(value)
+  const { register, handleSubmit } = useForm();
 
-  const major = useSelector(root => root?.major)
-  const dispatch = useDispatch()
+  const major = useSelector((root) => root?.major);
+  const { auth } = useSelector(root => root);
+  const dispatch = useDispatch();
 
-  useEffect(() => dispatch(fetchMajor()), [])
+  console.log(auth)
+  useEffect(() => dispatch(fetchMajor()), []);
+  const onSubmit = (value) => dispatch(authRegister(value));
   return (
     <>
       <CssBaseline enableColorScheme />
-      <SignInContainer direction="column" justifyContent="space-between">
+      <SignInContainer direction="column" justifyContent="space-between" sx={{ minHeight: "100vh", overflowY: "auto" }}>
         <CardRegister variant="outlined">
           <Typography
             component="h1"
@@ -39,9 +43,13 @@ const Register = () => {
           >
             Sign up
           </Typography>
+          {
+            auth?.message !== "" && <Alert severity="success">{auth?.message}</Alert>
+          }
+          
           <Box
             component="form"
-            onSubmit={handleSubmit}
+            onSubmit={handleSubmit(onSubmit)}
             noValidate
             sx={{
               display: "flex",
@@ -64,7 +72,7 @@ const Register = () => {
                 required
                 fullWidth
                 variant="outlined"
-                {...register('username')}
+                {...register("username")}
               />
             </FormControl>
 
@@ -82,8 +90,7 @@ const Register = () => {
                 required
                 fullWidth
                 variant="outlined"
-                {...register('email')}
-
+                {...register("email")}
               />
             </FormControl>
 
@@ -101,7 +108,7 @@ const Register = () => {
                 required
                 fullWidth
                 variant="outlined"
-                {...register('password')}
+                {...register("password")}
               />
             </FormControl>
             <Grid
@@ -124,7 +131,7 @@ const Register = () => {
                     required
                     fullWidth
                     variant="outlined"
-                {...register('firstName')}
+                    {...register("firstName")}
                   />
                 </FormControl>
               </Grid>
@@ -143,7 +150,7 @@ const Register = () => {
                     required
                     fullWidth
                     variant="outlined"
-                {...register('lastName')}
+                    {...register("lastName")}
                   />
                 </FormControl>
               </Grid>
@@ -156,7 +163,7 @@ const Register = () => {
                     // value={age}
                     label="Gender"
                     // onChange={handleChange}
-                {...register('gender')}
+                    {...register("gender")}
                   >
                     <MenuItem value={"M"}>Male</MenuItem>
                     <MenuItem value={"F"}>Female</MenuItem>
@@ -172,7 +179,7 @@ const Register = () => {
                     // value={age}
                     label="Classes"
                     // onChange={handleChange}
-                {...register('classes')}
+                    {...register("classes")}
                   >
                     <MenuItem value={"X"}>X</MenuItem>
                     <MenuItem value={"XI"}>XI</MenuItem>
@@ -182,22 +189,22 @@ const Register = () => {
               </Grid>
             </Grid>
             <FormControl fullWidth>
-                  <InputLabel id="demo-simple-select-label">Majors</InputLabel>
-                  <Select
-                    labelId="demo-simple-select-label"
-                    id="demo-simple-select"
-                    // value={age}
-                    label="Majors"
-                    // onChange={handleChange}
-                {...register('major')}
-                  >
-                    {
-                      major?.data?.map((m, i) => <MenuItem 
-                      key={i}
-                      value={"PPLG"}>{m?.name}</MenuItem>)
-                    }
-                  </Select>
-                </FormControl>
+              <InputLabel id="demo-simple-select-label">Majors</InputLabel>
+              <Select
+                labelId="demo-simple-select-label"
+                id="demo-simple-select"
+                // value={age}
+                label="Majors"
+                // onChange={handleChange}
+                {...register("major_id")}
+              >
+                {major?.data?.map((m, i) => (
+                  <MenuItem key={i} value={m?.id}>
+                    {m?.name}
+                  </MenuItem>
+                ))}
+              </Select>
+            </FormControl>
 
             <Button
               type="submit"
@@ -207,11 +214,25 @@ const Register = () => {
             >
               Sign in
             </Button>
-            <center>
-              <Link to={"/register"} style={{ textDecoration: "none" }}>
-                Login Here
-              </Link>
-            </center>
+
+            <Link to={"/login"} style={{ textDecoration: "none" }}>
+              Login Here
+            </Link>
+
+            {
+              !!auth?.err &&
+              !!auth?.err?.errors &&
+              auth?.err?.errors?.map((e, i) => (
+                <Typography
+                  key={i}
+                  variant="body2"
+                  color="error"
+                  sx={{ textAlign: "center" }}
+                >
+                  {e?.path}
+                  {e?.msg}
+                </Typography>
+              ))}
           </Box>
         </CardRegister>
       </SignInContainer>

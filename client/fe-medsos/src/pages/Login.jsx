@@ -1,12 +1,24 @@
-import { Box, Button, FormControl, FormLabel, TextField, Typography } from "@mui/material";
+import {
+  Box,
+  Button,
+  FormControl,
+  FormLabel,
+  TextField,
+  Typography,
+} from "@mui/material";
 import CssBaseline from "@mui/material/CssBaseline";
 import { Link } from "react-router-dom";
 import { Card } from "../utils/style";
 import { SignInContainer } from "../utils/style";
-
-
+import { useDispatch, useSelector } from "react-redux";
+import { authLogin, authRegister } from "../redux/action/authAction";
+import { useForm } from "react-hook-form";
 
 const Login = () => {
+  const { register, handleSubmit } = useForm();
+  const { auth } = useSelector((root) => root);
+  const dispatch = useDispatch();
+  const onSubmit = (value) => dispatch(authLogin(value));
 
   return (
     <>
@@ -22,31 +34,32 @@ const Login = () => {
           </Typography>
           <Box
             component="form"
-            // onSubmit={handleSubmit}
+            onSubmit={handleSubmit(onSubmit)}
             noValidate
             sx={{
-              display: 'flex',
-              flexDirection: 'column',
-              width: '100%',
+              display: "flex",
+              flexDirection: "column",
+              width: "100%",
               gap: 2,
             }}
           >
             <FormControl>
-                <FormLabel htmlFor="email">Email</FormLabel>
-                <TextField
+              <FormLabel htmlFor="username">Username</FormLabel>
+              <TextField
                 // error={emailError}
                 // helperText={emailErrorMessage}
-                id="email"
-                type="email"
-                name="email"
-                placeholder="your@email.com"
-                autoComplete="email"
+                id="username"
+                type="username"
+                name="username"
+                placeholder="Username"
+                autoComplete="username"
                 autoFocus
                 required
                 fullWidth
                 variant="outlined"
                 // color={emailError ? 'error' : 'primary'}
-                />
+                {...register("username")}
+              />
             </FormControl>
 
             <FormControl>
@@ -64,22 +77,36 @@ const Login = () => {
                 fullWidth
                 variant="outlined"
                 // color={passwordError ? 'error' : 'primary'}
+                {...register("password")}
               />
             </FormControl>
             <Button
               type="submit"
               fullWidth
               variant="contained"
-            //   onClick={validateInputs}
+              //   onClick={validateInputs}
             >
               Sign in
             </Button>
             <center>
-                <Link to={"/register"} style={{ textDecoration: "none" }}>
-                    Register Here
-                </Link>
+              <Link to={"/register"} style={{ textDecoration: "none" }}>
+                Register Here
+              </Link>
             </center>
-        </Box> 
+            {!!auth?.err &&
+              !!auth?.err?.errors &&
+              auth?.err?.errors?.map((e, i) => (
+                <Typography
+                  key={i}
+                  variant="body2"
+                  color="error"
+                  sx={{ textAlign: "center" }}
+                >
+                  {e?.path}
+                  {e?.msg}
+                </Typography>
+              ))}
+          </Box>
         </Card>
       </SignInContainer>
     </>

@@ -1,19 +1,12 @@
 import React, { useEffect, useState } from "react";
 import { FaUserAlt, FaRegComment } from "react-icons/fa";
-import { useDispatch, useSelector } from "react-redux";
-import { fetchProfile } from "../redux/action/authAction";
-import { fetchPost } from "../redux/action/postAction";
+import { useDispatch, useSelector } from "react-redux"; 
 
 const Post = ({ username = "username", content, showImage = false }) => {
   const [showComment, setShowComment] = useState(false);
   const profile = useSelector((root) => root?.auth);
   const posting = useSelector((root) => root?.post);
   const dispatch = useDispatch();
-
-  useEffect(() => {
-    dispatch(fetchProfile(profile?.token));
-    dispatch(fetchPost(profile?.token));
-  }, []);
 
   const toggleComment = () => {
     setShowComment((prev) => !prev);

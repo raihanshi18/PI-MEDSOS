@@ -1,7 +1,6 @@
 import { APISERVICE, config } from "../../utils"
 
-export const storePost = (token) => (dispatch) =>{
-    dispatch({ type: 'POST_INIT' })
+export const storePost = (token, data) => (dispatch) =>{
 
     APISERVICE().post('/post/create', data, config(token))
     .then((response) => {

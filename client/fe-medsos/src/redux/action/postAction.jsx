@@ -3,7 +3,7 @@ import { APISERVICE, config } from "../../utils"
 export const storePost = (token) => (dispatch) =>{
     dispatch({ type: 'POST_INIT' })
 
-    APISERVICE().post('/post/create', config(token))
+    APISERVICE().post('/post/create', data, config(token))
     .then((response) => {
         dispatch({
             type: 'POST_MESSAGE_SUCCESS',

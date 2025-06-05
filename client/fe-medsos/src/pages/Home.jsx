@@ -1,4 +1,4 @@
-import { useEffect, useRef } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { fetchProfile } from "../redux/action/authAction";
 import { FaThreads } from "react-icons/fa6";
@@ -6,9 +6,19 @@ import { CgHomeAlt } from "react-icons/cg";
 import { FaRegUser } from "react-icons/fa";
 import { TextField, Button, Typography } from "@mui/material";
 import Post from "../components/Post";
-import { fetchPost } from "../redux/action/postAction";
+import { fetchPost, storePost } from "../redux/action/postAction";
+
+const WEBSOCKET_URL = 'ws://127.0.0.1:3001'
 
 const Home = () => {
+
+  // const [isConnected, setIsConnected ] = useState(false)
+  // const [ websocket, setWebsocket ] = useState(true)
+
+  // const [ text, setText ] = useState('')
+
+  const ws = useRef(null)
+
   const profile = useSelector((root) => root?.auth);
   const posting = useSelector((root) => root?.post);
   const dispatch = useDispatch();
@@ -17,11 +27,29 @@ const Home = () => {
   useEffect(() => {
     dispatch(fetchProfile(profile?.token));
     dispatch(fetchPost(profile?.token))
-  }, []);
+    const socket = new WebSocket(WEBSOCKET_URL);
+
+    socket.onopen = () => console.log("conencted to websocket server");
+    socket.onmessage = (event) => {
+      console.log(`onmessage: ${JSON.stringify(event)}`);
+    }
+
+    socket.onerror = (event) => console.log(`onerror: ${JSON.stringify(event)}`);
+    socket.onclose = (event) => console.log(`onclose: ${JSON.stringify(event)}`);
+  }, [dispatch, profile?.token]);
 
   const handleChooseFile = () => {
     fileInputRef.current.click();
   };
+
+  const handleAddPost = (newPostContent) => {
+    console.log(newPostContent)
+    return
+    if(newPostContent.trim() === '') return;
+    dispatch(storePost(profile?.token, {
+      content_text: newPostContent
+    }))
+  }
 
   return (
     <div className="flex min-h-screen" style={{ backgroundColor: "#000000" }}>
@@ -79,6 +107,7 @@ const Home = () => {
               type="button"
               onClick={handleChooseFile}
               className="border rounded-md px-4 py-2 text-sm text-white bg-[#1DCD9F] hover:bg-[#169976] transition"
+              name="content_image"
             >
               Pilih Gambar
             </button>
@@ -87,14 +116,15 @@ const Home = () => {
 
           <Button
             variant="contained"
-            type="submit"
             sx={{
               backgroundColor: "#1DCD9F",
               "&:hover": { backgroundColor: "#169976" },
             }}
+            onClick={handleAddPost()}
           >
             Kirim
           </Button>
+
 
           {/* Chat box */}
           <div className="flex flex-col gap-2 mt-6">
